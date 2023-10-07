@@ -10,6 +10,12 @@
 <body>
 
     <div id="ContributionGraph">
+        <ul>
+            <li v-for="(cell, index) in contributionTypes" :key="index" :style="{color: cell.color}">
+              {{ cell.description }}
+            </li>
+        </ul>
+
         {{contributionList.data}}
     </div>
 
