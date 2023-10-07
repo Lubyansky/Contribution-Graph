@@ -16,7 +16,11 @@
             </li>
         </ul>
 
-        {{contributionList.data}}
+        <ul>
+            <li v-for="(value, name, index) in cells.data" :key="index">
+              {{index}}  {{name}}  {{ value['contributionCount'] }}
+            </li>
+        </ul>
     </div>
 
     <script type="module" src = "script.js"></script>

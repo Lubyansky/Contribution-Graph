@@ -30,18 +30,62 @@ new Vue({
                 url: 'https://dpg.gg/test/calendar.json',
                 data: {}
             },
-            //cells: []
+            cells: {
+                size: 357,
+                data: new Object()
+            },
+            currentDate: Date.now()
         }
     },
-    async mounted() {
-        let response = await fetch(this.contributionList.url);
 
-        if (response.ok) {
-            this.contributionList.data = await response.json();
-        } 
-        else {
-            console.log("Ошибка HTTP: " + response.status);
+    methods: {
+
+        async loadContributionData(){
+            let response = await fetch(this.contributionList.url);
+
+            if (response.ok) {
+                this.contributionList.data = await response.json();
+            } 
+            else {
+                console.log("Ошибка HTTP: " + response.status);
+            }
+        },
+
+
+        formateDate(date){
+            let year = date.getFullYear();
+            let month = date.getMonth();
+            let day = date.getDate();
+
+            //month = (month == 0) ? '12' : month
+            month = (month < 10) ? '0' + month : month;
+            day = (day < 10) ? '0' + day : day;
+            
+            return year + "-" + month + "-" + day
+        },
+
+
+        createCells(){
+            const dayMilliseconds = 24*60*60*1000;
+            let arr = Array(this.cells.size).fill(1).map((index, start) => index + start - 1)
+            arr = arr.reverse()
+
+            for(var value in arr){
+                let dateValue = new Date(this.currentDate - dayMilliseconds * value)
+                this.cells.data[this.formateDate(dateValue)] = {contributionCount: 0}
+            }
         }
+
+    },
+
+
+    created(){
+        this.createCells();
+    },
+
+
+    async mounted() {
+        await this.loadContributionData();
     } 
 
 })
