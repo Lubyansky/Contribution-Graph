@@ -4,7 +4,21 @@ new Vue({
     el: '#ContributionGraph',
     data(){
         return{
-            test: "HelloWorld"
+            contributionList: {
+              url: 'https://dpg.gg/test/calendar.json',
+              data: {}
+            }
         }
-    }
+    },
+    async mounted() {
+        let response = await fetch(this.contributionList.url);
+
+        if (response.ok) {
+            this.contributionList.data = await response.json();
+        } 
+        else {
+            console.log("Ошибка HTTP: " + response.status);
+        }
+    } 
+
 })
