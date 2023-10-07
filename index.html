@@ -15,10 +15,11 @@
             class="contribution-cell"
             :style="{'background-color': cell.color}"
             @click="Click()"
+            :title="getContributionsCount() + '\n' + cell.date"
         >
             <div v-if="isPressed" class="contribution-cell__hint">
                 <div class="contribution-cell__hint__contributions">{{getContributionsCount()}}</div>
-                <div class="contribution-cell__hint__date">{{cell.name}}</div>
+                <div class="contribution-cell__hint__date">{{cell.date}}</div>
             </div>
         </div>
     </template>
@@ -27,15 +28,15 @@
         <div id="contribution-graph" class="contributions" v-if="!isLoading">
 
             <div class="contributions__items">
-                <div class="contributions__item" v-for="(value, name, index) in cells.data" :key="index" >
-                    <contribution-cell :cell="{...value, name}" :index="index" :selected-cell="selectedCell" @select-cell = "selectCell" >
+                <div class="contributions__item" v-for="(cell, index) in cells.data" :key="index" >
+                    <contribution-cell :cell="cell" :index="index" :selected-сell="selectedCell" @select-cell = "selectCell" >
                     </contribution-cell>
                 </div>
             </div>
 
             <div class="contributions__examples">
                 Меньше
-                <div class="contributions__items">
+                <div class="contributions__items gorizontal-grid">
                     <div class="contributions__item" v-for="(cell, index)  in contributionTypes" :key="index" >
                         <contribution-cell :cell="cell">
                         </contribution-cell>

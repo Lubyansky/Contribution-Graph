@@ -56,64 +56,83 @@ new Vue({
 
         formateDate(date){
             let year = date.getFullYear();
-            let month = date.getMonth();
+            let month = date.getMonth() + 1;
             let day = date.getDate();
 
-            month = (month == 0) ? '12' : month
             month = (month < 10) ? '0' + month : month;
             day = (day < 10) ? '0' + day : day;
             
-            return year + "-" + month + "-" + day
+            return year + "-" + month + "-" + day;
         },
 
 
         createCells(){
             const dayMilliseconds = 24*60*60*1000;
-            let arr = Array(this.cells.size).fill(1).map((index, start) => index + start - 1)
-            arr = arr.reverse()
+            let arr = Array(this.cells.size).fill(1).map((index, start) => index + start - 1);
+            arr = arr.reverse();
 
             for(var value in arr){
-                let dateValue = new Date(this.currentDate - dayMilliseconds * value)
-                this.cells.data[this.formateDate(dateValue)] = {contributionCount: 0, color: '#000000'}
+                let dateValue = new Date(this.currentDate - (dayMilliseconds * value));
+                this.cells.data[this.formateDate(dateValue)] = {contributionCount: 0, color: '#000000'};
             }
         },
 
 
         async fillCells(){
-            let contributionList = JSON.parse(JSON.stringify(this.contributionList.data))
-            const resultDictionary = {}
+            let contributionList = JSON.parse(JSON.stringify(this.contributionList.data));
+            const resultDictionary = {};
             
             for (var date in this.cells.data) {
                 if(contributionList[date]){
-                    resultDictionary[date] = {contributionCount: contributionList[date], color: '#000000'}
+                    resultDictionary[date] = {contributionCount: contributionList[date], color: '#000000'};
                 }
                 else {
-                    resultDictionary[date] = {contributionCount: 0}
+                    resultDictionary[date] = {contributionCount: 0};
                 }
 
                 if(resultDictionary[date].contributionCount == 0){
-                    resultDictionary[date].color = this.contributionTypes[0].color
+                    resultDictionary[date].color = this.contributionTypes[0].color;
                 }
                 if(resultDictionary[date].contributionCount >= 1 && resultDictionary[date].contributionCount <= 9){
-                    resultDictionary[date].color = this.contributionTypes[1].color
+                    resultDictionary[date].color = this.contributionTypes[1].color;
                 }
                 if(resultDictionary[date].contributionCount >= 10 && resultDictionary[date].contributionCount <= 19){
-                    resultDictionary[date].color = this.contributionTypes[2].color
+                    resultDictionary[date].color = this.contributionTypes[2].color;
                 }
                 if(resultDictionary[date].contributionCount >= 20 && resultDictionary[date].contributionCount <= 29){
-                    resultDictionary[date].color = this.contributionTypes[3].color
+                    resultDictionary[date].color = this.contributionTypes[3].color;
                 }
                 if(resultDictionary[date].contributionCount >= 30){
-                    resultDictionary[date].color = this.contributionTypes[4].color
+                    resultDictionary[date].color = this.contributionTypes[4].color;
                 }
             }
 
-            this.cells.data = resultDictionary
-            console.log(this.cells.data)
+            this.cells.data = resultDictionary;
+            //console.log(this.cells.data);
         },
 
+
+        sortCells(){
+            const data = this.cells.data
+            let dates = Object.keys(data);
+            dates = dates.sort();
+            const resultArray = []
+
+            dates.forEach((date) =>{
+                //console.log(new Date(Date.parse(date)))
+                resultArray.push({
+                    date: date, 
+                    contributionCount: data[date].contributionCount,
+                    color: data[date].color
+                })
+            })
+
+            this.cells.data = resultArray
+        },
+
+
         selectCell(index){
-            this.selectedCell = index
+            this.selectedCell = index;
         }
     },
 
@@ -126,8 +145,9 @@ new Vue({
     async mounted() {
         await this.loadContributionData();
 
-        await this.fillCells()
-        this.isLoading = false
+        await this.fillCells();
+        await this.sortCells();
+        this.isLoading = false;
     } 
 
 })
@@ -144,23 +164,23 @@ Vue.component('contribution-cell',{
     methods: {
         getContributionsCount(){
             if(this.cell.description){
-                return this.cell.description
+                return this.cell.description;
             }
             return (this.cell.contributionCount > 0 ? this.cell.contributionCount : `No`)  + ` contributions`;
         },
-        /*Click(){
+        Click(){
             if(this.isPressed){
-                this.isPressed = false
+                this.isPressed = false;
             }
             else {
-                this.isPressed = true
+                this.isPressed = true;
             }
 
             this.$emit('selectCell', this.index)
 
             if(this.selectedCell != this.index){
-                this.isPressed = false
+                this.isPressed = false;
             }
-        }*/
+        }
     }
 });
