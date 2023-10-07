@@ -6,23 +6,46 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "assets/styles/style.css">
 </head>
 <body>
 
-    <div id="ContributionGraph">
-        <ul>
-            <li v-for="(cell, index) in contributionTypes" :key="index" :style="{color: cell.color}">
-              {{ cell.description }}
-            </li>
-        </ul>
+    <template id="contribution-cell">
+        <div 
+            class="contribution-cell"
+            :style="{'background-color': cell.color}"
+            @click="Click()"
+        >
+            <div v-if="isPressed" class="contribution-cell__hint">
+                <div class="contribution-cell__hint__contributions">{{getContributionsCount()}}</div>
+                <div class="contribution-cell__hint__date">{{cell.name}}</div>
+            </div>
+        </div>
+    </template>
 
-        <ul>
-            <li v-for="(value, name, index) in cells.data" :key="index">
-              {{index}}  {{name}}  {{ value['contributionCount'] }}
-            </li>
-        </ul>
+    <div class="container">
+        <div id="contribution-graph" class="contributions" v-if="!isLoading">
+
+            <div class="contributions__items">
+                <div class="contributions__item" v-for="(value, name, index) in cells.data" :key="index" >
+                    <contribution-cell :cell="{...value, name}" :index="index" :selected-cell="selectedCell" @select-cell = "selectCell" >
+                    </contribution-cell>
+                </div>
+            </div>
+
+            <div class="contributions__examples">
+                Меньше
+                <div class="contributions__items">
+                    <div class="contributions__item" v-for="(cell, index)  in contributionTypes" :key="index" >
+                        <contribution-cell :cell="cell">
+                        </contribution-cell>
+                    </div>
+                </div>
+                Больше
+            </div>
+
+        </div>
     </div>
-
-    <script type="module" src = "script.js"></script>
+    <script type="module" src = "assets/js/script.js"></script>
 </body>
 </html>
