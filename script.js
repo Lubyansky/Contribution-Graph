@@ -74,7 +74,25 @@ new Vue({
                 let dateValue = new Date(this.currentDate - dayMilliseconds * value)
                 this.cells.data[this.formateDate(dateValue)] = {contributionCount: 0}
             }
+        },
+
+
+        async fillCells(){
+            let contributionList = JSON.parse(JSON.stringify(this.contributionList.data))
+            const resultDictionary = {}
+            
+            for (var date in this.cells.data) {
+                if(contributionList[date]){
+                    resultDictionary[date] = {contributionCount: contributionList[date]}
+                }
+                else {
+                    resultDictionary[date] = {contributionCount: 0}
+                }
+            }
+
+            this.cells.data = resultDictionary
         }
+
 
     },
 
@@ -86,6 +104,8 @@ new Vue({
 
     async mounted() {
         await this.loadContributionData();
+
+        await this.fillCells()
     } 
 
 })
